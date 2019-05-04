@@ -130,7 +130,7 @@ Ext.define('Traccar.view.map.MapMarkerController', {
     },
 
     updateDevice: function (store, data) {
-        var i, device, deviceId, marker, style;
+        var i, device, deviceId, deviceName, marker, style;
 
         if (!Ext.isArray(data)) {
             data = [data];
@@ -148,8 +148,9 @@ Ext.define('Traccar.view.map.MapMarkerController', {
                     this.updateDeviceMarker(style, this.getDeviceColor(device), device.get('category'));
                     marker.changed();
                 }
-                if (style.getText().getText() !== device.get('name')) {
-                    style.getText().setText(device.get('name'));
+                deviceName = Ext.String.htmlDecode(device.get('name'));
+                if (style.getText().getText() !== deviceName) {
+                    style.getText().setText(deviceName);
                     marker.changed();
                 }
             }
@@ -260,7 +261,7 @@ Ext.define('Traccar.view.map.MapMarkerController', {
             style = this.getLatestMarker(this.getDeviceColor(device),
                 position.get('course'),
                 device.get('category'));
-            style.getText().setText(device.get('name'));
+            style.getText().setText(Ext.String.htmlDecode(device.get('name')));
             marker.setStyle(style);
             marker.setId(device.get('id'));
             this.latestMarkers[deviceId] = marker;
@@ -457,9 +458,6 @@ Ext.define('Traccar.view.map.MapMarkerController', {
         if (this.selectedMarker) {
             if (this.selectedMarker.get('event')) {
                 this.getView().getMarkersSource().removeFeature(this.selectedMarker);
-                if (!marker || !marker.get('event')) {
-                    this.fireEvent('deselectevent');
-                }
             } else if (!Ext.getStore('ReportRoute').showMarkers &&
                     this.selectedMarker.get('record') instanceof Traccar.model.Position) {
                 this.getView().getMarkersSource().removeFeature(this.selectedMarker);
@@ -496,12 +494,13 @@ Ext.define('Traccar.view.map.MapMarkerController', {
                 this.reportMarkers[position.get('id')] = this.addReportMarker(position);
             }
             this.selectMarker(this.reportMarkers[position.get('id')], center);
+        } else if (this.selectedMarker) {
+            this.selectMarker(null, false);
         }
     },
 
     selectEvent: function (position) {
         var marker;
-        this.fireEvent('deselectfeature');
         if (position) {
             marker = this.addReportMarker(position);
             marker.set('event', true);

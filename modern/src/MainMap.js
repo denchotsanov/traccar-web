@@ -29,9 +29,9 @@ class MainMap extends Component {
 
     return (
       <Map style={{height: this.props.height, width: this.props.width}} center={position} zoom={this.state.zoom}>
-        <TileLayer
-          attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
-          url="https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png" />
+        <TileLayer attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
+        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
         {markers}
       </Map>
     )

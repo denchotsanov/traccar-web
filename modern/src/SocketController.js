@@ -22,7 +22,7 @@ const displayNotifications = events => {
 class SocketController extends Component {
   connectSocket() {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const socket = new WebSocket(protocol + '//' + window.location.host + '/api/socket');
+    const socket = new WebSocket(protocol + '//gpss.myassets.eu/api/socket');
 
     socket.onclose = () => {
       setTimeout(() => this.connectSocket(), 60 * 1000);

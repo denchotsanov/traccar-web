@@ -89,11 +89,8 @@ class LoginPage extends Component {
     return (
       <main className={classes.root}>
         <Paper className={classes.paper}>
-
-          <img className={classes.logo} src="/logo.svg" alt="Traccar" />
-
+          <img className={classes.logo} src="/logo.svg" alt="GPS MyAssets" />
           <form onSubmit={this.handleLogin}>
-
             <FormControl margin="normal" required fullWidth error={failed}>
               <InputLabel htmlFor="email">Email</InputLabel>
               <Input

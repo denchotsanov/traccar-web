@@ -78,7 +78,7 @@ class MainToobar extends Component {
               <MenuIcon />
             </IconButton>
             <Typography variant="title" color="inherit" className={classes.flex}>
-              Traccar
+              GPS MyAssets
             </Typography>
             <Button color="inherit" onClick={this.handleLogout}>Logout</Button>
           </Toolbar>

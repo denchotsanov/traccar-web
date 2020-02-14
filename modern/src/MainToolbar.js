@@ -21,7 +21,20 @@ const styles = theme => ({
     flexGrow: 1
   },
   appBar: {
-    zIndex: theme.zIndex.drawer + 1,
+        zIndex: theme.zIndex.drawer + 1,
+        backgroundColor: "#bad0b0",
+        height: "48px",
+        minHeight: "48px",
+        '@media(min-width:600px)' : {
+            minHeight:"48px"
+        },
+  },
+  toolBar:{
+      height: "48px",
+      minHeight: "48px",
+      '@media(min-width:600px)' : {
+          minHeight:"48px"
+      }
   },
   list: {
     width: 250
@@ -70,7 +83,7 @@ class MainToobar extends Component {
     return (
       <Fragment>
         <AppBar position="static" className={classes.appBar}>
-          <Toolbar>
+          <Toolbar className={classes.toolBar}>
             <IconButton
               className={classes.menuButton}
               color="inherit"
@@ -110,7 +123,7 @@ class MainToobar extends Component {
                 <ListItemIcon>
                   <SettingsIcon />
                 </ListItemIcon>
-                <ListItemText primary="Settings" />
+                <ListItemText primary="Settings"  />
               </ListItem>
             </List>
           </div>

@@ -6,6 +6,7 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Paper from '@material-ui/core/Paper';
 import withStyles from '@material-ui/core/styles/withStyles';
+import {updateServer} from './actions';
 
 const styles = theme => ({
   root: {
@@ -45,10 +46,11 @@ class LoginPage extends Component {
     super(props);
     this.state = {
       filled: false,
-      loading: false,
+      loading: true,
       failed: false,
       email: "",
-      password: ""
+      password: "",
+      server:null
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleRegister = this.handleRegister.bind(this);
@@ -83,63 +85,84 @@ class LoginPage extends Component {
     });
   }
 
+    componentDidMount() {
+    fetch('/api/server').then(response => {
+      if (response.ok) {
+        response.json().then(server => {
+        console.log(server);
+            this.setState({
+                loading:false,
+                server: server
+            });
+        console.log(this.state);
+        });
+      }
+    });
+}
+
   render() {
     const { classes } = this.props;
-    const { failed, email, password } = this.state;
-    return (
-      <main className={classes.root}>
-        <Paper className={classes.paper}>
-          <img className={classes.logo} src="/logo.svg" alt="GPS MyAssets" />
-          <form onSubmit={this.handleLogin}>
-            <FormControl margin="normal" required fullWidth error={failed}>
-              <InputLabel htmlFor="email">Email</InputLabel>
-              <Input
-                id="email"
-                value={email}
-                autoComplete="email"
-                autoFocus
-                onChange={this.handleChange} />
-              { failed && <FormHelperText>Invalid username or password</FormHelperText> }
-            </FormControl>
+    const { loading, failed, email, password } = this.state;
+        if (loading) {
+          return (
+            <div>Loading...</div>
+          );
+        } else {
+            return (
+              <main className={classes.root}>
+                <Paper className={classes.paper}>
+                  <img className={classes.logo} src="/logo.svg" alt="GPS MyAssets" />
+                  <form onSubmit={this.handleLogin}>
+                    <FormControl margin="normal" required fullWidth error={failed}>
+                      <InputLabel htmlFor="email">Email</InputLabel>
+                      <Input
+                        id="email"
+                        value={email}
+                        autoComplete="email"
+                        autoFocus
+                        onChange={this.handleChange} />
+                      { failed && <FormHelperText>Invalid username or password</FormHelperText> }
+                    </FormControl>
 
-            <FormControl margin="normal" required fullWidth>
-              <InputLabel htmlFor="password">Password</InputLabel>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                autoComplete="current-password"
-                onChange={this.handleChange} />
-            </FormControl>
+                    <FormControl margin="normal" required fullWidth>
+                      <InputLabel htmlFor="password">Password</InputLabel>
+                      <Input
+                        id="password"
+                        type="password"
+                        value={password}
+                        autoComplete="current-password"
+                        onChange={this.handleChange} />
+                    </FormControl>
 
-            <div className={classes.buttons}>
+                    <div className={classes.buttons}>
 
-              <Button
-                type="button"
-                variant="raised"
-                disabled
-                className={classes.button}
-                onClick={this.handleRegister}>
-                Register
-              </Button>
+                      <Button
+                        type="button"
+                        variant="raised"
+                        disabled
+                        className={classes.button}
+                        onClick={this.handleRegister}>
+                        Register
+                      </Button>
 
-              <Button
-                type="submit"
-                variant="raised"
-                color="primary"
-                disabled={!email || !password}
-                className={classes.button}>
-                Login
-              </Button>
+                      <Button
+                        type="submit"
+                        variant="raised"
+                        color="primary"
+                        disabled={!email || !password}
+                        className={classes.button}>
+                        Login
+                      </Button>
 
-            </div>
+                    </div>
 
-          </form>
+                  </form>
 
-        </Paper>
-      </main>
-    );
-  }
+                </Paper>
+              </main>
+            );
+        }
+    }
 }
 
 export default withStyles(styles)(LoginPage);

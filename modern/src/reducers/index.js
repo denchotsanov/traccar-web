@@ -1,7 +1,20 @@
 const initialState = {
+  server:null,
+  session: null,
   devices: [],
   positions: [],
-  events: []
+  events: [],
+  drivers:[],
+  groups:[],
+  geofences:[],
+  calendars:[],
+  maintenance:[],
+  computed:[],
+  commandTypes:[],
+  commands:[],
+  notificationTypes:[],
+  notifications:[],
+  notificator:[],
 };
 
 function rootReducer(state = initialState, action) {
@@ -16,6 +29,22 @@ function rootReducer(state = initialState, action) {
         ...state,
         positions: [...action.positions]
       });
+    case 'UPDATE_SERVER':
+        return Object.assign({}, {
+              ...state,
+              server: action.server
+            });
+    case 'UPDATE_GROUPS':
+        return Object.assign({}, {
+              ...state,
+              groups: [...action.groups]
+            });
+    case 'UPDATE_SESSION':
+        return Object.assign({}, {
+              ...state,
+              session: action.session
+            });
+
     default:
       return state;
   }

@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { updateDevices } from './actions';
+import { updateDevices, updateGroups, convertDateTime } from './actions';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -10,30 +10,69 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Divider from '@material-ui/core/Divider';
+import withStyles from '@material-ui/core/styles/withStyles';
 
 const mapStateToProps = state => ({
-  devices: state.devices
+  devices: state.devices,
+  positions: state.positions,
+  session: state.session,
+  server: state.server,
+  groups: state.groups
 });
-
+const styles = themes => ({
+    list:{
+        padding: "1px 32px 1px 16px",
+        "min-height": "35px"
+    },
+    avatar: {
+        width:"25px",
+        height:"25px"
+    },
+    avatarIcon:{
+        width:"1rem",
+        height:"1rem"
+    },
+    deviceName:{
+        " & span":{
+            "font-size":"0.85rem",
+            color:"#373ec19c",
+            "font-weight": "bold",
+        },
+        " & p":{
+            "font-size":"0.65rem",
+        },
+    }
+});
 class DeviceList extends Component {
+
   componentDidMount() {
+    fetch('/api/groups').then(response => {
+        if (response.ok) {
+          response.json().then(groups => {
+              this.props.dispatch(updateGroups(groups));
+          });
+        }
+      });
     fetch('/api/devices').then(response => {
       if (response.ok) {
         response.json().then(devices => {
-          this.props.dispatch(updateDevices(devices));
+            this.props.dispatch(updateDevices(devices));
         });
       }
     });
   }
 
   render() {
-    const devices = this.props.devices.map(device =>
+    const { classes, session } = this.props;
+    const devices = this.props.devices.map(function(device) {
+
+      return (
       <Fragment key={device.id.toString()}>
-        <ListItem button>
-          <Avatar>
-            <LocationOnIcon />
+        <ListItem button className={classes.list}>
+          <Avatar className={classes.avatar}>
+            <LocationOnIcon className={classes.avatarIcon} />
           </Avatar>
-          <ListItemText primary={device.name} secondary={device.uniqueId} />
+          <ListItemText className={classes.deviceName} primary={device.name} secondary={convertDateTime(device.lastUpdate, session.attributes.timezone)} />
           <ListItemSecondaryAction>
             <IconButton>
               <MoreVertIcon />
@@ -43,8 +82,8 @@ class DeviceList extends Component {
         <li>
           <Divider inset />
         </li>
-      </Fragment>
-    );
+      </Fragment>)
+    });
 
     return (
       <List>
@@ -54,4 +93,4 @@ class DeviceList extends Component {
   }
 }
 
-export default connect(mapStateToProps)(DeviceList);
+export default connect(mapStateToProps)(withStyles(styles)(DeviceList));

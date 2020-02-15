@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { updateSession } from './actions';
 import ContainerDimensions from 'react-container-dimensions';
 import MainToobar from './MainToolbar';
 import MainMap from './MainMap';
 import Drawer from '@material-ui/core/Drawer';
 import withStyles from '@material-ui/core/styles/withStyles';
 import SocketController from './SocketController';
+import ServerController from './ServerController';
 import withWidth, { isWidthUp } from '@material-ui/core/withWidth';
 import DeviceList from './DeviceList';
 
@@ -48,6 +51,9 @@ class MainPage extends Component {
   componentDidMount() {
     fetch('/api/session').then(response => {
       if (response.ok) {
+        response.json().then(session => {
+           this.props.dispatch(updateSession(session));
+        });
         this.setState({
           loading: false
         });
@@ -55,6 +61,7 @@ class MainPage extends Component {
         this.props.history.push('/login');
       }
     });
+
   }
 
   render() {
@@ -68,6 +75,7 @@ class MainPage extends Component {
       return (
         <div className={classes.root}>
           <SocketController />
+          <ServerController />
           <MainToobar history={this.props.history} />
           <div className={classes.content}>
             <Drawer
@@ -88,4 +96,4 @@ class MainPage extends Component {
   }
 }
 
-export default withWidth()(withStyles(styles)(MainPage));
+export default connect()(withWidth()(withStyles(styles)(MainPage)));

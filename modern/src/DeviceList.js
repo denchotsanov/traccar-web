@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { updateDevices, updateGroups, convertDateTime } from './actions';
+import { addDevices, updateGroups, convertDateTime } from './actions';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -56,7 +56,7 @@ class DeviceList extends Component {
     fetch('/api/devices').then(response => {
       if (response.ok) {
         response.json().then(devices => {
-            this.props.dispatch(updateDevices(devices));
+            this.props.dispatch(addDevices(devices));
         });
       }
     });

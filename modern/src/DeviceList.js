@@ -24,13 +24,19 @@ const styles = themes => ({
         padding: "1px 32px 1px 16px",
         "min-height": "35px"
     },
-    avatar: {
+    avatarOn: {
         width:"25px",
-        height:"25px"
+        height:"25px",
+        "background-color": "#4dfa90ad"
+    },
+    avatarOff: {
+            width:"25px",
+            height:"25px",
+            "background-color": "#ff5468ad"
     },
     avatarIcon:{
         width:"1rem",
-        height:"1rem"
+        height:"1rem",
     },
     deviceName:{
         " & span":{
@@ -64,12 +70,13 @@ class DeviceList extends Component {
 
   render() {
     const { classes, session } = this.props;
-    const devices = this.props.devices.map(function(device) {
 
+    const devices = this.props.devices.map(function(device) {
+       console.log((device.status === 'online' ));
       return (
       <Fragment key={device.id.toString()}>
         <ListItem button className={classes.list}>
-          <Avatar className={classes.avatar}>
+          <Avatar className={device.status === 'online' ? classes.avatarOn : classes.avatarOff}>
             <LocationOnIcon className={classes.avatarIcon} />
           </Avatar>
           <ListItemText className={classes.deviceName} primary={device.name} secondary={convertDateTime(device.lastUpdate, session.attributes.timezone)} />

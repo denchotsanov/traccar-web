@@ -11,8 +11,12 @@ class App extends Component {
       <Fragment>
         <CssBaseline />
         <Switch>
-          <Route exact path='/' component={MainPage} />
-          <Route exact path='/login' component={LoginPage} />
+          <Route exact path='/'>
+                <MainPage />
+          </Route>
+          <Route exact path='/login'>
+            <LoginPage/>
+          </Route>
           <Route exact path='/settings' component={SettingsPage} />
         </Switch>
       </Fragment>

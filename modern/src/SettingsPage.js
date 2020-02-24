@@ -38,7 +38,7 @@ class SettingsPage extends Component {
               loading: false
             });
           } else {
-            this.props.history.push('/login');
+//            this.props.history.push('/login');
           }
         });
       }

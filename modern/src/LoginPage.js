@@ -1,5 +1,4 @@
-//import React, { Component } from 'react';
-import React, { useState } from "react";
+import React, { Component } from 'react';
 import PropTypes from "prop-types";
 
 import Button from '@material-ui/core/Button';
@@ -48,220 +47,129 @@ const styles = theme => ({
     margin: `${theme.spacing.unit * 3}px ${theme.spacing.unit}px 0`
   },
 });
-//
-//class LoginPage extends Component {
-//  constructor(props) {
-//    super(props);
-//    this.state = {
-//      filled: false,
-//      loading: true,
-//      failed: false,
-//      email: "",
-//      password: "",
-//      server:null
-//    };
-//    this.handleChange = this.handleChange.bind(this);
-//    this.handleRegister = this.handleRegister.bind(this);
-//    this.handleLogin = this.handleLogin.bind(this);
-//  }
-//
-//  handleChange(event) {
-//    this.setState({
-//      [event.target.id]: event.target.value
-//    });
-//  }
-//
-//  handleRegister() {
-//    // TODO implement registration
-//  }
-//
-//  handleLogin(event) {
-//    event.preventDefault();
-//    const { email, password } = this.state;
-//    fetch("/api/session", {
-//      method: "POST",
-//      body: new URLSearchParams(`email=${email}&password=${password}`)
-//    }).then(response => {
-//      if (response.ok) {
-//        this.props.history.push('/'); // TODO avoid calling sessions twice
-//      } else {
-//        this.setState({
-//          failed: true,
-//          password: ""
-//        });
-//      }
-//    });
-//  }
-//
-//    componentDidMount() {
-//    fetch('/api/server').then(response => {
-//      if (response.ok) {
-//        response.json().then(server => {
-//        console.log(server);
-//            this.setState({
-//                loading:false,
-//                server: server
-//            });
-//        console.log(this.state);
-//        });
-//      }
-//    });
-//}
-//
-//  render() {
-//    const { classes } = this.props;
-//    const { loading, failed, email, password } = this.state;
-//        if (loading) {
-//          return (
-//            <div>Loading...</div>
-//          );
-//        } else {
-//            return (
-//              <main className={classes.root}>
-//                <Paper className={classes.paper}>
-//                  <img className={classes.logo} src="/logo.svg" alt="GPS MyAssets" />
-//                  <form onSubmit={this.handleLogin}>
-//                    <FormControl margin="normal" required fullWidth error={failed}>
-//                      <InputLabel htmlFor="email">Email</InputLabel>
-//                      <Input
-//                        id="email"
-//                        value={email}
-//                        autoComplete="email"
-//                        autoFocus
-//                        onChange={this.handleChange} />
-//                      { failed && <FormHelperText>Invalid username or password</FormHelperText> }
-//                    </FormControl>
-//
-//                    <FormControl margin="normal" required fullWidth>
-//                      <InputLabel htmlFor="password">Password</InputLabel>
-//                      <Input
-//                        id="password"
-//                        type="password"
-//                        value={password}
-//                        autoComplete="current-password"
-//                        onChange={this.handleChange} />
-//                    </FormControl>
-//
-//                    <div className={classes.buttons}>
-//
-//                      <Button
-//                        type="button"
-//                        variant="raised"
-//                        disabled
-//                        className={classes.button}
-//                        onClick={this.handleRegister}>
-//                        Register
-//                      </Button>
-//
-//                      <Button
-//                        type="submit"
-//                        variant="raised"
-//                        color="primary"
-//                        disabled={!email || !password}
-//                        className={classes.button}>
-//                        Login
-//                      </Button>
-//
-//                    </div>
-//
-//                  </form>
-//
-//                </Paper>
-//              </main>
-//            );
-//        }
-//    }
-//}
 
-function LoginPage({ classes }) {
-  let [failed, setFailed] = useState(false);
-  let [email, setEmail] = useState("");
-  let [password, setPassword] = useState("");
-  let [registering, setRegistering] = useState(false);
-  let [formMessage, setFormMessage] = useState("");
+class LoginPage extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      filled: false,
+      loading: true,
+      failed: false,
+      email: "",
+      password: "",
+      server:null
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleRegister = this.handleRegister.bind(this);
+    this.handleLogin = this.handleLogin.bind(this);
+  }
 
-  let { login } = useAuth();
-  let handleSubmit = event => {
-    event.preventDefault();
-    login(email, password).catch(() => {
-      setFailed(true);
-      setPassword("");
+  handleChange(event) {
+    this.setState({
+      [event.target.id]: event.target.value
     });
-  };
+  }
 
-  return (
-    <main className={classes.root}>
-      <Paper className={classes.paper}>
-        <img className={classes.logo} src="/logo.svg" alt="GPS MyAssets" />
+  handleRegister() {
+    // TODO implement registration
+  }
 
-        {formMessage && (
-          <Typography paragraph className={classes.formMessage}>
-            {formMessage}
-          </Typography>
-        )}
+  handleLogin(event) {
+    event.preventDefault();
+    const { email, password } = this.state;
+    fetch("/api/session", {
+      method: "POST",
+      body: new URLSearchParams(`email=${email}&password=${password}`)
+    }).then(response => {
+      if (response.ok) {
+        this.props.history.push('/'); // TODO avoid calling sessions twice
+      } else {
+        this.setState({
+          failed: true,
+          password: ""
+        });
+      }
+    });
+  }
 
-        <form onSubmit={handleSubmit}>
-          <FormControl margin="normal" required fullWidth error={failed}>
-            <InputLabel htmlFor="email">Email</InputLabel>
-            <Input
-              id="email"
-              value={email}
-              autoComplete="email"
-              autoFocus
-              onChange={event => setEmail(event.target.value)}
-            />
-            {failed && (
-              <FormHelperText>Invalid username or password</FormHelperText>
-            )}
-          </FormControl>
-
-          <FormControl margin="normal" required fullWidth>
-            <InputLabel htmlFor="password">Password</InputLabel>
-            <Input
-              id="password"
-              type="password"
-              value={password}
-              autoComplete="current-password"
-              onChange={event => setPassword(event.target.value)}
-            />
-          </FormControl>
-
-          <div className={classes.buttons}>
-            <Button
-              type="button"
-              variant="contained"
-              className={classes.button}
-              onClick={() => setRegistering(true)}
-            >
-              Register
-            </Button>
-
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={!email || !password}
-              className={classes.button}
-            >
-              Login
-            </Button>
-          </div>
-        </form>
-      </Paper>
-      <UserRegistrationDialog
-        open={registering}
-        onCancel={() => setRegistering(false)}
-        onSave={() => {
-          setRegistering(false);
-          setFormMessage("User created! Login with email and password.");
-        }}
-      />
-    </main>
-  );
+    componentDidMount() {
+    fetch('/api/server').then(response => {
+      if (response.ok) {
+        response.json().then(server => {
+        console.log(server);
+            this.setState({
+                loading:false,
+                server: server
+            });
+        console.log(this.state);
+        });
+      }
+    });
 }
 
-LoginPage.propTypes = {
-  classes: PropTypes.object.isRequired
-};
+  render() {
+    const { classes } = this.props;
+    const { loading, failed, email, password } = this.state;
+        if (loading) {
+          return (
+            <div>Loading...</div>
+          );
+        } else {
+            return (
+              <main className={classes.root}>
+                <Paper className={classes.paper}>
+                  <img className={classes.logo} src="/logo.svg" alt="GPS MyAssets" />
+                  <form onSubmit={this.handleLogin}>
+                    <FormControl margin="normal" required fullWidth error={failed}>
+                      <InputLabel htmlFor="email">Email</InputLabel>
+                      <Input
+                        id="email"
+                        value={email}
+                        autoComplete="email"
+                        autoFocus
+                        onChange={this.handleChange} />
+                      { failed && <FormHelperText>Invalid username or password</FormHelperText> }
+                    </FormControl>
+
+                    <FormControl margin="normal" required fullWidth>
+                      <InputLabel htmlFor="password">Password</InputLabel>
+                      <Input
+                        id="password"
+                        type="password"
+                        value={password}
+                        autoComplete="current-password"
+                        onChange={this.handleChange} />
+                    </FormControl>
+
+                    <div className={classes.buttons}>
+
+                      <Button
+                        type="button"
+                        variant="raised"
+                        disabled
+                        className={classes.button}
+                        onClick={this.handleRegister}>
+                        Register
+                      </Button>
+
+                      <Button
+                        type="submit"
+                        variant="raised"
+                        color="primary"
+                        disabled={!email || !password}
+                        className={classes.button}>
+                        Login
+                      </Button>
+
+                    </div>
+
+                  </form>
+
+                </Paper>
+              </main>
+            );
+        }
+    }
+}
 
 export default withStyles(styles)(LoginPage);

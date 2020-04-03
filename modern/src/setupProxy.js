@@ -1,8 +1,6 @@
-const proxy = require("http-proxy-middleware");
+const proxy = require('http-proxy-middleware');
 
-/**
- * Fully customizable proxy used by react-scripts
- */
-module.exports = function(app) {
-  app.use(proxy("/api", { target: "http://192.168.1.200:8082/", ws: true }));
+module.exports = function (app) {
+    app.use(proxy('/api/socket', { target: 'ws://' + process.env.REACT_APP_URL_NAME, ws: true }));
+    app.use(proxy('/api', { target: 'http://' + process.env.REACT_APP_URL_NAME }));
 };

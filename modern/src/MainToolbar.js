@@ -1,3 +1,4 @@
+import t from './common/localization'
 import React, { Component, Fragment } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -8,6 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
+import ListSubheader from '@material-ui/core/ListSubheader';
 import Divider from '@material-ui/core/Divider';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -90,10 +92,10 @@ class MainToobar extends Component {
               onClick={this.openDrawer}>
               <MenuIcon />
             </IconButton>
-            <Typography variant="title" color="inherit" className={classes.flex}>
+            <Typography variant="h6" color="inherit" className={classes.flex}>
               GPS MyAssets
             </Typography>
-            <Button color="inherit" onClick={this.handleLogout}>Logout</Button>
+            <Button color="inherit" onClick={this.handleLogout}>{t('loginLogout')}</Button>
           </Toolbar>
         </AppBar>
         <Drawer open={this.state.drawer} onClose={this.closeDrawer}>
@@ -104,26 +106,81 @@ class MainToobar extends Component {
             onClick={this.closeDrawer}
             onKeyDown={this.closeDrawer}>
             <List>
-              <ListItem button>
+              <ListItem button onClick={() => this.props.history.push('/')}>
                 <ListItemIcon>
                   <DashboardIcon />
                 </ListItemIcon>
-                <ListItemText primary="Dashboard" />
-              </ListItem>
-              <ListItem button>
-                <ListItemIcon>
-                  <BarChartIcon />
-                </ListItemIcon>
-                <ListItemText primary="Reports" />
+                <ListItemText primary={t('mapTitle')} />
               </ListItem>
             </List>
             <Divider />
-            <List>
-              <ListItem button>
+            <List
+              subheader={
+                <ListSubheader>
+                  {t('reportTitle')}
+                </ListSubheader>
+              }>
+              <ListItem button onClick={() => this.props.history.push('/reports/route')}>
+                <ListItemIcon>
+                  <BarChartIcon />
+                </ListItemIcon>
+                <ListItemText primary={t('reportRoute')} />
+              </ListItem>
+              <ListItem button disabled>
+                <ListItemIcon>
+                  <BarChartIcon />
+                </ListItemIcon>
+                <ListItemText primary={t('reportEvents')} />
+              </ListItem>
+              <ListItem button disabled>
+                <ListItemIcon>
+                  <BarChartIcon />
+                </ListItemIcon>
+                <ListItemText primary={t('reportTrips')} />
+              </ListItem>
+              <ListItem button disabled>
+                <ListItemIcon>
+                  <BarChartIcon />
+                </ListItemIcon>
+                <ListItemText primary={t('reportStops')} />
+              </ListItem>
+              <ListItem button disabled>
+                <ListItemIcon>
+                  <BarChartIcon />
+                </ListItemIcon>
+                <ListItemText primary={t('reportSummary')} />
+              </ListItem>
+              <ListItem button disabled>
+                <ListItemIcon>
+                  <BarChartIcon />
+                </ListItemIcon>
+                <ListItemText primary={t('reportChart')} />
+              </ListItem>
+            </List>
+            <Divider />
+            <List
+              subheader={
+                <ListSubheader>
+                  {t('settingsTitle')}
+                </ListSubheader>
+              }>
+              <ListItem button disabled>
                 <ListItemIcon>
                   <SettingsIcon />
                 </ListItemIcon>
-                <ListItemText primary="Settings"  />
+                <ListItemText primary={t('settingsUser')} />
+              </ListItem>
+              <ListItem button disabled>
+                <ListItemIcon>
+                  <SettingsIcon />
+                </ListItemIcon>
+                <ListItemText primary={t('settingsServer')} />
+              </ListItem>
+              <ListItem button disabled>
+                <ListItemIcon>
+                  <SettingsIcon />
+                </ListItemIcon>
+                <ListItemText primary={t('sharedNotifications')} />
               </ListItem>
             </List>
           </div>

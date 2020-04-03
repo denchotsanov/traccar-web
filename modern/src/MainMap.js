@@ -1,54 +1,175 @@
+import 'mapbox-gl/dist/mapbox-gl.css';
 import React, { Component } from 'react';
-import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
-import { connect } from 'react-redux'
-import DivIcon from './leaflet/DivIcon';
+import { connect } from 'react-redux';
+import mapboxgl from 'mapbox-gl';
+
+const calculateMapCenter = (state) => {
+  if (state.devices.selectedId) {
+    const position = state.positions.items[state.devices.selectedId] || null;
+    if (position) {
+      return [position.longitude, position.latitude];
+    }
+  }
+  return null;
+}
+
+const mapFeatureProperties = (state, position) => {
+  const device = state.devices.items[position.deviceId] || null;
+  return {
+    name: device ? device.name : ''
+  }
+}
 
 const mapStateToProps = state => ({
-  positions: state.positions,
-  session: state.session,
-  server: state.server,
-  groups: state.groups,
-  devices: state.devices
+  mapCenter: calculateMapCenter(state),
+  data: {
+    type: 'FeatureCollection',
+    features: Object.values(state.positions.items).map(position => ({
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [position.longitude, position.latitude]
+      },
+      properties: mapFeatureProperties(state, position)
+    }))
+  }
 });
 
 class MainMap extends Component {
+  componentDidMount() {
+    const map = new mapboxgl.Map({
+      container: this.mapContainer,
+      style: 'https://cdn.traccar.com/map/basic.json',
+      center: [0, 0],
+      zoom: 1
+    });
 
-  state = {
-    lat: 0,
-    lng: 0,
-    zoom: 3,
+    map.on('load', () => this.mapDidLoad(map));
   }
 
+  loadImage(key, url) {
+    return new Promise(resolutionFunc => {
+      const image = new Image();
+      image.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = image.width * window.devicePixelRatio;
+        canvas.height = image.height * window.devicePixelRatio;
+        canvas.style.width = `${image.width}px`;
+        canvas.style.height = `${image.height}px`;
+        const context = canvas.getContext('2d');
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        this.map.addImage(key, context.getImageData(0, 0, canvas.width, canvas.height), {
+          pixelRatio: window.devicePixelRatio
+        });
+        resolutionFunc()
+      }
+      image.src = url;
+    });
+  }
 
+  mapDidLoad(map) {
+    this.map = map;
+
+    Promise.all([
+      this.loadImage('background', 'images/background.svg'),
+      this.loadImage('icon-marker', 'images/icon/marker.svg')
+    ]).then(() => {
+      this.imagesDidLoad();
+    });
+  }
+
+  imagesDidLoad() {
+    this.map.addSource('positions', {
+      'type': 'geojson',
+      'data': this.props.data
+    });
+
+    this.map.addLayer({
+      'id': 'device-background',
+      'type': 'symbol',
+      'source': 'positions',
+      'layout': {
+        'icon-image': 'background',
+        'icon-allow-overlap': true,
+        'text-field': '{name}',
+        'text-allow-overlap': true,
+        'text-anchor': 'bottom',
+        'text-offset': [0, -2],
+        'text-font': ['Roboto Regular'],
+        'text-size': 12
+      },
+      'paint':{
+        'text-halo-color': 'white',
+        'text-halo-width': 1
+     }
+    });
+
+    this.map.addLayer({
+      'id': 'device-icon',
+      'type': 'symbol',
+      'source': 'positions',
+      'layout': {
+        'icon-image': 'icon-marker',
+        'icon-allow-overlap': true
+      }
+    });
+
+    this.map.addControl(new mapboxgl.NavigationControl());
+
+    const bounds = this.calculateBounds();
+    if (bounds) {
+      this.map.fitBounds(bounds, {
+        padding: 100,
+        maxZoom: 9
+      });
+    }
+  }
+
+  calculateBounds() {
+    if (this.props.data.features && this.props.data.features.length) {
+      const first = this.props.data.features[0].geometry.coordinates;
+      const bounds = [[...first], [...first]];
+      for (let feature of this.props.data.features) {
+        const longitude = feature.geometry.coordinates[0]
+        const latitude = feature.geometry.coordinates[1]
+        if (longitude < bounds[0][0]) {
+          bounds[0][0] = longitude;
+        } else if (longitude > bounds[1][0]) {
+          bounds[1][0] = longitude;
+        }
+        if (latitude < bounds[0][1]) {
+          bounds[0][1] = latitude;
+        } else if (latitude > bounds[1][1]) {
+          bounds[1][1] = latitude;
+        }
+      }
+      return bounds;
+    } else {
+      return null;
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.map) {
+      if (prevProps.mapCenter !== this.props.mapCenter) {
+        this.map.easeTo({
+          center: this.props.mapCenter
+        });
+      }
+      if (prevProps.data.features !== this.props.data.features) {
+        this.map.getSource('positions').setData(this.props.data);
+      }
+    }
+  }
 
   render() {
-    const {session} = this.props;
-    console.log(this.props);
-    var position = [this.state.lat, this.state.lng];
-    var zoom = this.state.zoom;
-    if(session){
-        position = [session.latitude, session.longitude];
-        zoom = session.zoom;
-    }
-    const markers = this.props.positions.map(position =>
-      <DivIcon key={position.id.toString()} position={{ lat: position.latitude, lng: position.longitude }} className="" iconSize={[40, 40]}>
-        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 50 50">
-          <circle cx="25" cy="25" r="20" stroke="#fff" stroke-width="2.5" fill="#008000" />
-          <path d="m25 5v5" stroke="#fff" stroke-width="2.5" transform="rotate(45 25 25)" />
-          <image x="13" y="13" fill="#fff" href="/category/car.svg" />
-        </svg>
-        {position.deviceId}
-      </DivIcon>
-    );
-
-    return (
-      <Map style={{height: this.props.height, width: this.props.width}} center={position} zoom={zoom}>
-        <TileLayer attribution="&copy; <a href=&quot;http://osm.org/copyright&quot;>OpenStreetMap</a> contributors"
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-
-        {markers}
-      </Map>
-    )
+    const style = {
+      position: 'relative',
+      overflow: 'hidden',
+      width: '100%',
+      height: '100%'
+    };
+    return <div style={style} ref={el => this.mapContainer = el} />;
   }
 }
 

@@ -107,27 +107,28 @@ class DeviceList extends Component {
   render() {
     const { classes, session } = this.props;
 
-    const devices = this.props.devices.map(function(device,index,list) {
+    const devices = this.props.devices.map((device,index,list)=> {
        console.log((device.status === 'online' ));
-      return (
-      <Fragment key={device.id.toString()}>
-        <ListItem button className={classes.list} onClick={() => this.handleItemClick(device)}>
-		<ListItemAvatar>
-          <Avatar className={device.status === 'online' ? classes.avatarOn : classes.avatarOff}>
-            <LocationOnIcon className={classes.avatarIcon} />
-          </Avatar>
-          </ListItemAvatar>
-          <ListItemText className={classes.deviceName} primary={device.name} secondary={convertDateTime(device.lastUpdate, session.attributes.timezone)} />
-          <ListItemSecondaryAction>
-            <IconButton onClick={(event) => this.handleMenuClick(event)}>
-              <MoreVertIcon />
-            </IconButton>
-          </ListItemSecondaryAction>
-        </ListItem>
-        {index < list.length - 1 ? <Divider /> : null}
-      </Fragment>
-    );
+       return (
+          <Fragment key={device.id.toString()}>
+            <ListItem button className={classes.list} onClick={() => this.handleItemClick(device)}>
+            <ListItemAvatar>
+              <Avatar className={device.status === 'online' ? classes.avatarOn : classes.avatarOff}>
+                <LocationOnIcon className={classes.avatarIcon} />
+              </Avatar>
+              </ListItemAvatar>
+              <ListItemText className={classes.deviceName} primary={device.name} />
 
+              <ListItemSecondaryAction>
+                <IconButton onClick={(event) => this.handleMenuClick(event)}>
+                  <MoreVertIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+            {index < list.length - 1 ? <Divider /> : null}
+          </Fragment>
+        );
+    });
     return (
       <Fragment>
         <List>
@@ -148,6 +149,6 @@ class DeviceList extends Component {
       </Fragment>
     );
   }
-}
 
+}
 export default connect(mapStateToProps)(withStyles(styles)(DeviceList));

@@ -22,6 +22,7 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
+    "build_release": "PUBLIC_URL=/modern/ craco build",
     "test": "craco test"
   },
   "browserslist": {

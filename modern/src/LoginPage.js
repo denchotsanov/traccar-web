@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { sessionActions } from './store';
 import Button from '@material-ui/core/Button';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
 import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
 
 import t from './common/localization';
 
 const useStyles = makeStyles(theme => ({
   root: {
     width: 'auto',
-    display: 'block', // Fix IE11 issue.
     marginLeft: theme.spacing(3),
     marginRight: theme.spacing(3),
     [theme.breakpoints.up(400 + theme.spacing(3 * 2))]: {
@@ -27,25 +26,24 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    padding: `${theme.spacing(3)}px`,
+    padding: theme.spacing(3),
   },
   logo: {
-    margin: `${theme.spacing(2)}px 0 ${theme.spacing(1)}px`
+    marginTop: theme.spacing(2)
   },
   buttons: {
-    width: '100%',
+    marginTop: theme.spacing(1),
     display: 'flex',
-    flexDirection: 'row'
-  },
-  button: {
-    flex: '1 1 0',
-    margin: `${theme.spacing(3)}px ${theme.spacing(1)}px 0`
+    justifyContent: 'space-evenly',
+    '& > *': {
+      flexBasis: '40%',
+    },
   },
 }));
 
 const LoginPage = () => {
-  const [filled, setFilled] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+
   const [failed, setFailed] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -69,7 +67,8 @@ const LoginPage = () => {
     event.preventDefault();
     fetch('/api/session', { method: 'POST', body: new URLSearchParams(`email=${email}&password=${password}`) }).then(response => {
       if (response.ok) {
-        history.push('/'); // TODO: Avoid calling sessions twice
+        dispatch(sessionActions.authenticated(true));
+        history.push('/');
       } else {
         setFailed(true);
         setPassword('');
@@ -82,49 +81,42 @@ const LoginPage = () => {
       <Paper className={classes.paper}>
         <img className={classes.logo} src="/logo.svg" alt="Traccar" />
         <form onSubmit={handleLogin}>
-          <FormControl margin="normal" required fullWidth error={failed}>
-            <InputLabel htmlFor="email">{t('userEmail')}</InputLabel>
-            <Input
-              id="email"
-              name="email"
-              value={email}
-              autoComplete="email"
-              autoFocus
-              onChange={handleEmailChange} />
-            {failed && <FormHelperText>Invalid username or password</FormHelperText>}
+
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            error={failed}
+            label={t('userEmail')}
+            name="email"
+            value={email}
+            autoComplete="email"
+            autoFocus
+            onChange={handleEmailChange}
+            helperText={failed && 'Invalid username or password'} />
+
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            error={failed}
+            label={t('userPassword')}
+            name="password"
+            value={password}
+            type="password"
+            autoComplete="current-password"
+            onChange={handlePasswordChange} />
+
+          <FormControl fullWidth margin="normal">
+            <div className={classes.buttons}>
+              <Button type="button" variant="contained" disabled onClick={handleRegister}>
+                {t('loginRegister')}
+              </Button>
+              <Button type="submit" variant="contained" color="primary" disabled={!email || !password}>
+                {t('loginLogin')}
+              </Button>
+            </div>
           </FormControl>
-
-          <FormControl margin="normal" required fullWidth>
-            <InputLabel htmlFor="password">{t('userPassword')}</InputLabel>
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              value={password}
-              autoComplete="current-password"
-              onChange={handlePasswordChange} />
-          </FormControl>
-
-          <div className={classes.buttons}>
-            <Button
-              type="button"
-              variant="contained"
-              disabled
-              className={classes.button}
-              onClick={handleRegister}>
-              {t('loginRegister')}
-            </Button>
-
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              disabled={!email || !password}
-              className={classes.button}>
-              {t('loginLogin')}
-            </Button>
-
-          </div>
         </form>
       </Paper>
     </main>

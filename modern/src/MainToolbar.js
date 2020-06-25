@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
+import { useDispatch } from 'react-redux';
+import { sessionActions } from './store';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -32,10 +34,11 @@ const useStyles = makeStyles(theme => ({
   menuButton: {
     marginLeft: -12,
     marginRight: 20,
-  }
+  },
 }));
 
 const MainToolbar = () => {
+  const dispatch = useDispatch();
   const [drawer, setDrawer] = useState(false);
   const classes = useStyles();
   const history = useHistory();
@@ -46,6 +49,7 @@ const MainToolbar = () => {
   const handleLogout = () => {
     fetch('/api/session', { method: 'DELETE' }).then(response => {
       if (response.ok) {
+        dispatch(sessionActions.authenticated(false));
         history.push('/login');
       }
     })
@@ -86,7 +90,7 @@ const MainToolbar = () => {
           <List subheader={<ListSubheader>
             {t('reportTitle')}
           </ListSubheader>}>
-            <ListItem button onClick={() => { history.push('/reports/route') }}>
+            <ListItem button disabled onClick={() => { history.push('/reports/route') }}>
               <ListItemIcon>
                 <BarChartIcon />
               </ListItemIcon>

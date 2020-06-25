@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { sessionActions } from './store';
 import { useHistory } from 'react-router-dom';
 import { isWidthUp, makeStyles, withWidth } from '@material-ui/core';
 import Drawer from '@material-ui/core/Drawer';
 import ContainerDimensions from 'react-container-dimensions';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 import DeviceList from './DeviceList';
 import MainMap from './MainMap';
 import MainToobar from './MainToolbar';
 import SocketController from './SocketController';
-
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -40,21 +42,24 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const MainPage = ({ width }) => {
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const authenticated = useSelector(state => state.session.authenticated);
   const classes = useStyles();
   const history = useHistory();
 
   useEffect(() => {
-    fetch('/api/session').then(response => {
-      if (response.ok) {
-        setLoading(false);
-      } else {
-        history.push('/login');
-      }
-    });
-  }, [history]);
+    if (!authenticated) {
+      fetch('/api/session').then(response => {
+        if (response.ok) {
+          dispatch(sessionActions.authenticated(true));
+        } else {
+          history.push('/login');
+        }
+      });
+    }
+  }, [authenticated]);
 
-  return loading ? (<div>Loading...</div>) : (
+  return !authenticated ? (<LinearProgress />) : (
     <div className={classes.root}>
       <SocketController />
       <MainToobar />

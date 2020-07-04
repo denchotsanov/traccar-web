@@ -1,6 +1,7 @@
 import t from './common/localization'
 import React, { Component } from 'react';
 import PropTypes from "prop-types";
+import { Map, TileLayer } from 'react-leaflet';
 
 import Button from '@material-ui/core/Button';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -9,10 +10,10 @@ import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import Paper from '@material-ui/core/Paper';
 import withStyles from '@material-ui/core/styles/withStyles';
-import {updateServer} from './actions';
-
 import green from "@material-ui/core/colors/green";
 import Typography from "@material-ui/core/Typography";
+
+import {updateServer} from './actions';
 import { useAuth } from "./context/auth";
 import UserRegistrationDialog from "./UserRegistrationDialog";
 
@@ -30,10 +31,19 @@ const styles = theme => ({
   },
   paper: {
     marginTop: theme.spacing(8),
+    position:'relative',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     padding: `${theme.spacing(3)}px`,
+  },
+  map:{
+    position:'fixed',
+    top:'0',
+    left:'0',
+    width:'100%',
+    height:'100%',
+    opacity:'0.3'
   },
   logo: {
     margin: `${theme.spacing(2)}px 0 ${theme.spacing(1)}px`
@@ -50,7 +60,7 @@ const styles = theme => ({
 });
 
 class LoginPage extends Component {
-  constructor(props) {
+    constructor(props) {
     super(props);
     this.state = {
       filled: false,
@@ -58,24 +68,25 @@ class LoginPage extends Component {
       failed: false,
       email: "",
       password: "",
-      server:null
+      server:null,
+      lat:42,
+      lng:24,
+      zoom:13
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleRegister = this.handleRegister.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
   }
 
-  handleChange(event) {
+    handleChange(event) {
     this.setState({
       [event.target.id]: event.target.value
     });
   }
 
-  handleRegister() {
-    // TODO implement registration
-  }
+    handleRegister() { }
 
-  handleLogin(event) {
+    handleLogin(event) {
     event.preventDefault();
     const { email, password } = this.state;
     fetch("/api/session", {
@@ -94,27 +105,27 @@ class LoginPage extends Component {
   }
 
     componentDidMount() {
-    fetch('/api/server').then(response => {
-      if (response.ok) {
-        response.json().then(server => {
-        console.log(server);
-            this.setState({
-                loading:false,
-                server: server
+        fetch('/api/server').then(response => {
+          if (response.ok) {
+            response.json().then(server => {
+            console.log(server);
+                this.setState({
+                    loading:false,
+                    server: server
+                });
+            console.log(this.state);
             });
-        console.log(this.state);
+          }
         });
-      }
-    });
-}
+    }
 
-  render() {
-    const { classes } = this.props;
-    const { loading, failed, email, password } = this.state;
+    render() {
+        const { classes } = this.props;
+        const { loading, failed, email, password, zoom} = this.state;
+        let position = [this.state.lat, this.state.lng];
+
         if (loading) {
-          return (
-            <div>Loading...</div>
-          );
+            return (<div>Loading...</div>);
         } else {
             return (
               <main className={classes.root}>

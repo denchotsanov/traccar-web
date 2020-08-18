@@ -22,14 +22,17 @@ import t from './common/localization';
 import RemoveDialog from './RemoveDialog';
 
 const useStyles = makeStyles(theme => ({
+  mainList:{
+    padding:'8px 0;'
+  },
   list:{
-    padding: "1px 32px 1px 16px",
-    "min-height": "35px"
+    padding: '1px 32px 1px 16px;',
+    'min-height': '35px;'
   },
   avatarOn: {
     width:"25px",
     height:"25px",
-    "background-color": "#4dfa90ad"
+    "background-color": "#bad0b0"
   },
   avatarOff: {
     width:"25px",
@@ -40,7 +43,12 @@ const useStyles = makeStyles(theme => ({
     width:"1rem",
     height:"1rem",
   },
+  avatarIconContainer:{
+    'min-width':'auto',
+  },
   deviceName:{
+    margin: 0,
+    padding: '0 16px;',
     " & span":{
       "font-size":"0.85rem",
       color:"#373ec19c",
@@ -96,19 +104,27 @@ const DeviceList = () => {
       dispatch(devicesActions.remove(menuDeviceId));
     }
   }
+  const convertDateTime = (lastUpdate,timezone) => {
 
+    var date = new Date(lastUpdate);
+    var timeOptions = {
+      hour12: false,
+      timezone: timezone
+    };
+    return date.toLocaleString('bg-BG',timeOptions)
+  }
   return (
-    <Fragment>
-      <List className={classes.list}>
+    <>
+      <List className={classes.mainList}>
         {devices.map((device, index, list) => (
           <Fragment key={device.id}>
             <ListItem button key={device.id} className={classes.list} onClick={() => dispatch(devicesActions.select(device))}>
-              <ListItemAvatar>
+              <ListItemAvatar className={classes.avatarIconContainer}>
                 <Avatar className={device.status === 'online' ? classes.avatarOn : classes.avatarOff}>
                   <LocationOnIcon className={classes.avatarIcon} />
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText className={classes.deviceName} primary={device.name} secondary={device.uniqueId} />
+              <ListItemText className={classes.deviceName} primary={device.name} secondary={convertDateTime(device.lastUpdate)} />
               <ListItemSecondaryAction>
                 <IconButton onClick={(event) => handleMenuClick(event, device.id)}>
                   <MoreVertIcon />
@@ -127,7 +143,7 @@ const DeviceList = () => {
         <MenuItem onClick={handleMenuRemove}>{t('sharedRemove')}</MenuItem>
       </Menu>
       <RemoveDialog deviceId={menuDeviceId} open={removeDialogOpen} onResult={handleRemoveResult} />
-    </Fragment>
+    </>
   );
 }
 

@@ -62,6 +62,7 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     bottom: theme.spacing(2),
     right: theme.spacing(2),
+    'background-color':'#bad0b0',
   },
 }));
 
@@ -105,9 +106,11 @@ const DeviceList = () => {
     }
   }
   const convertDateTime = (lastUpdate,timezone) => {
-
-    var date = new Date(lastUpdate);
-    var timeOptions = {
+    if(!lastUpdate){
+      return ''
+    }
+    let date = new Date(lastUpdate);
+    let timeOptions = {
       hour12: false,
       timezone: timezone
     };

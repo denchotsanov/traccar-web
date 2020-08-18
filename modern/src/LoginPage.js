@@ -13,6 +13,7 @@ import t from './common/localization';
 const useStyles = makeStyles(theme => ({
   root: {
     width: 'auto',
+    height: 'auto',
     marginLeft: theme.spacing(3),
     marginRight: theme.spacing(3),
     [theme.breakpoints.up(400 + theme.spacing(3 * 2))]: {
@@ -22,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   paper: {
-    marginTop: theme.spacing(8),
+    top: theme.spacing(8),
     position:'relative',
     display: 'flex',
     flexDirection: 'column',
@@ -38,7 +39,6 @@ const useStyles = makeStyles(theme => ({
     opacity:'0.3'
   },
   logo: {
-    marginTop: theme.spacing(2)
   },
   buttons: {
     marginTop: theme.spacing(1),

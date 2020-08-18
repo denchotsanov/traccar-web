@@ -71,7 +71,7 @@ const MainToolbar = () => {
   return (
     <>
       <AppBar position="static" className={classes.appBar}>
-        <Toolbar>
+        <Toolbar className={classes.toolBar}>
           <IconButton
             className={classes.menuButton}
             color="inherit"

@@ -22,9 +22,33 @@ import t from './common/localization';
 import RemoveDialog from './RemoveDialog';
 
 const useStyles = makeStyles(theme => ({
-  list: {
-    maxHeight: '100%',
-    overflow: 'auto',
+  list:{
+    padding: "1px 32px 1px 16px",
+    "min-height": "35px"
+  },
+  avatarOn: {
+    width:"25px",
+    height:"25px",
+    "background-color": "#4dfa90ad"
+  },
+  avatarOff: {
+    width:"25px",
+    height:"25px",
+    "background-color": "#ff5468ad"
+  },
+  avatarIcon:{
+    width:"1rem",
+    height:"1rem",
+  },
+  deviceName:{
+    " & span":{
+      "font-size":"0.85rem",
+      color:"#373ec19c",
+      "font-weight": "bold",
+    },
+    " & p":{
+      "font-size":"0.65rem",
+    },
   },
   fab: {
     position: 'absolute',
@@ -74,17 +98,17 @@ const DeviceList = () => {
   }
 
   return (
-    <>
+    <Fragment>
       <List className={classes.list}>
         {devices.map((device, index, list) => (
           <Fragment key={device.id}>
-            <ListItem button key={device.id} onClick={() => dispatch(devicesActions.select(device))}>
+            <ListItem button key={device.id} className={classes.list} onClick={() => dispatch(devicesActions.select(device))}>
               <ListItemAvatar>
-                <Avatar>
-                  <LocationOnIcon />
+                <Avatar className={device.status === 'online' ? classes.avatarOn : classes.avatarOff}>
+                  <LocationOnIcon className={classes.avatarIcon} />
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText primary={device.name} secondary={device.uniqueId} />
+              <ListItemText className={classes.deviceName} primary={device.name} secondary={device.uniqueId} />
               <ListItemSecondaryAction>
                 <IconButton onClick={(event) => handleMenuClick(event, device.id)}>
                   <MoreVertIcon />
@@ -103,7 +127,7 @@ const DeviceList = () => {
         <MenuItem onClick={handleMenuRemove}>{t('sharedRemove')}</MenuItem>
       </Menu>
       <RemoveDialog deviceId={menuDeviceId} open={removeDialogOpen} onResult={handleRemoveResult} />
-    </>
+    </Fragment>
   );
 }
 

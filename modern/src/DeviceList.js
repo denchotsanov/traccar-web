@@ -1,154 +1,110 @@
-import t from './common/localization'
-import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
-import { addDevices, updateGroups, convertDateTime } from './actions';
+import React, { Fragment, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
+import { useHistory } from 'react-router-dom';
+import Avatar from '@material-ui/core/Avatar';
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemText from '@material-ui/core/ListItemText';
-import Avatar from '@material-ui/core/Avatar';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import IconButton from '@material-ui/core/IconButton';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
-import Divider from '@material-ui/core/Divider';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
-import RemoveDialog from './RemoveDialog'
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemText from '@material-ui/core/ListItemText';
+import LocationOnIcon from '@material-ui/icons/LocationOn';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+
 import { devicesActions } from './store';
-import withStyles from '@material-ui/core/styles/withStyles';
+import t from './common/localization';
+import RemoveDialog from './RemoveDialog';
 
+const useStyles = makeStyles(theme => ({
+  list: {
+    maxHeight: '100%',
+    overflow: 'auto',
+  },
+  fab: {
+    position: 'absolute',
+    bottom: theme.spacing(2),
+    right: theme.spacing(2),
+  },
+}));
 
-const mapStateToProps = state => ({
-  devices: Object.values(state.devices.items),
+const DeviceList = () => {
+  const [menuDeviceId, setMenuDeviceId] = useState(null);
+  const [menuAnchorEl, setMenuAnchorEl] = useState(null);
+  const [removeDialogOpen, setRemoveDialogOpen] = useState(false);
+  const devices = useSelector(state => Object.values(state.devices.items));
+  const dispatch = useDispatch();
+  const classes = useStyles();
+  const history = useHistory();
 
-  positions: state.positions,
-  session: state.session,
-  server: state.server,
-  groups: state.groups
-});
-const styles = themes => ({
-    list:{
-        padding: "1px 32px 1px 16px",
-        "min-height": "35px"
-    },
-    avatarOn: {
-        width:"25px",
-        height:"25px",
-        "background-color": "#4dfa90ad"
-    },
-    avatarOff: {
-            width:"25px",
-            height:"25px",
-            "background-color": "#ff5468ad"
-    },
-    avatarIcon:{
-        width:"1rem",
-        height:"1rem",
-    },
-    deviceName:{
-        " & span":{
-            "font-size":"0.85rem",
-            color:"#373ec19c",
-            "font-weight": "bold",
-        },
-        " & p":{
-            "font-size":"0.65rem",
-        },
+  const handleMenuClick = (event, deviceId) => {
+    setMenuDeviceId(deviceId);
+    setMenuAnchorEl(event.currentTarget);
+  }
+
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+  }
+
+  const handleMenuEdit = () => {
+    history.push(`/device/${menuDeviceId}`);
+    handleMenuClose();
+  }
+
+  const handleMenuRemove = () => {
+    setRemoveDialogOpen(true);
+    handleMenuClose();
+  }
+
+  const handleAdd = () => {
+    history.push('/device');
+    handleMenuClose();
+  }
+
+  const handleRemoveResult = (removed) => {
+    setRemoveDialogOpen(false);
+    if (removed) {
+      dispatch(devicesActions.remove(menuDeviceId));
     }
-});
-class DeviceList extends Component {
-	constructor(props) {
-    	super(props);
-    	this.state = {
-      	menuAnchorEl: null,
-      	removeDialogOpen: false
-    	};
-  	}
-    handleItemClick(device) {
-        this.props.dispatch(devicesActions.select(device));
-    }
-
-  handleMenuClick(event) {
-    this.setState({ menuAnchorEl: event.currentTarget });
   }
 
-  handleMenuClose() {
-    this.setState({ menuAnchorEl: null });
-  }
-
-  handleMenuEdit() {
-    this.props.history.push('/device');
-    this.handleMenuClose();
-  }
-
-  handleMenuRemove() {
-    this.setState({ removeDialogOpen: true });
-    this.handleMenuClose();
-  }
-
-  componentDidMount() {
-    fetch('/api/groups').then(response => {
-        if (response.ok) {
-          response.json().then(groups => {
-              this.props.dispatch(updateGroups(groups));
-          });
-        }
-      });
-    fetch('/api/devices').then(response => {
-      if (response.ok) {
-        response.json().then(devices => {
-            this.props.dispatch(addDevices(devices));
-        });
-      }
-    });
-  }
-
-  render() {
-    const { classes, session } = this.props;
-
-    const devices = this.props.devices.map((device,index,list)=> {
-       console.log((device.status === 'online' ));
-       return (
-          <Fragment key={device.id.toString()}>
-            <ListItem button className={classes.list} onClick={() => this.handleItemClick(device)}>
-            <ListItemAvatar>
-              <Avatar className={device.status === 'online' ? classes.avatarOn : classes.avatarOff}>
-                <LocationOnIcon className={classes.avatarIcon} />
-              </Avatar>
+  return (
+    <>
+      <List className={classes.list}>
+        {devices.map((device, index, list) => (
+          <Fragment key={device.id}>
+            <ListItem button key={device.id} onClick={() => dispatch(devicesActions.select(device))}>
+              <ListItemAvatar>
+                <Avatar>
+                  <LocationOnIcon />
+                </Avatar>
               </ListItemAvatar>
-              <ListItemText className={classes.deviceName} primary={device.name} />
-
+              <ListItemText primary={device.name} secondary={device.uniqueId} />
               <ListItemSecondaryAction>
-                <IconButton onClick={(event) => this.handleMenuClick(event)}>
+                <IconButton onClick={(event) => handleMenuClick(event, device.id)}>
                   <MoreVertIcon />
                 </IconButton>
               </ListItemSecondaryAction>
             </ListItem>
             {index < list.length - 1 ? <Divider /> : null}
           </Fragment>
-        );
-    });
-    return (
-      <Fragment>
-        <List>
-          {devices}
-        </List>
-        <Menu
-          id="device-menu"
-          anchorEl={this.state.menuAnchorEl}
-          keepMounted
-          open={Boolean(this.state.menuAnchorEl)}
-          onClose={() => this.handleMenuClose()}>
-          <MenuItem onClick={() => this.handleMenuEdit()}>{t('sharedEdit')}</MenuItem>
-          <MenuItem onClick={() => this.handleMenuRemove()}>{t('sharedRemove')}</MenuItem>
-        </Menu>
-        <RemoveDialog
-          open={this.state.removeDialogOpen}
-          onClose={() => { this.setState({ removeDialogOpen: false }) }} />
-      </Fragment>
-    );
-  }
-
+        ))}
+      </List>
+      <Fab size="medium" color="primary" className={classes.fab} onClick={handleAdd}>
+        <AddIcon />
+      </Fab>
+      <Menu id="device-menu" anchorEl={menuAnchorEl} keepMounted open={Boolean(menuAnchorEl)} onClose={handleMenuClose}>
+        <MenuItem onClick={handleMenuEdit}>{t('sharedEdit')}</MenuItem>
+        <MenuItem onClick={handleMenuRemove}>{t('sharedRemove')}</MenuItem>
+      </Menu>
+      <RemoveDialog deviceId={menuDeviceId} open={removeDialogOpen} onResult={handleRemoveResult} />
+    </>
+  );
 }
-export default connect(mapStateToProps)(withStyles(styles)(DeviceList));
+
+export default DeviceList;

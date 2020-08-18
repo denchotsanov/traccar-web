@@ -8,6 +8,7 @@
     "@material-ui/icons": "^4.9.1",
     "@reduxjs/toolkit": "^1.2.5",
     "mapbox-gl": "^1.8.1",
+    "moment": "^2.27.0",
     "ol": "^6.2.1",
     "ol-mapbox-style": "^6.0.1",
     "react": "^16.13.0",
@@ -22,6 +23,7 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
+    "build_release": "PUBLIC_URL=/modern/ craco build",
     "test": "craco test"
   },
   "browserslist": {

@@ -1,6 +1,8 @@
-import { Component } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { connect } from 'react-redux';
-import { positionsActions, devicesActions } from './store';
+import { positionsActions, devicesActions, sessionActions } from './store';
+import { useHistory } from 'react-router-dom';
 
 const displayNotifications = events => {
   if ("Notification" in window) {
@@ -19,43 +21,55 @@ const displayNotifications = events => {
   }
 };
 
-class SocketController extends Component {
-  connectSocket() {
+const SocketController = () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const authenticated = useSelector(state => state.session.authenticated);
+
+  const connectSocket = () => {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const socket = new WebSocket(protocol + '//' + window.location.host + '/api/socket');
 
     socket.onclose = () => {
-      setTimeout(() => this.connectSocket(), 60 * 1000);
+      setTimeout(() => connectSocket(), 60 * 1000);
     };
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.devices) {
-        this.props.dispatch(devicesActions.update(data.devices));
+        dispatch(devicesActions.update(data.devices));
       }
       if (data.positions) {
-        this.props.dispatch(positionsActions.update(data.positions));
+        dispatch(positionsActions.update(data.positions));
       }
       if (data.events) {
         displayNotifications(data.events);
       }
+    };
+  }
+
+  useEffect(() => {
+    if (authenticated) {
+      fetch('/api/devices').then(response => {
+        if (response.ok) {
+          response.json().then(devices => {
+            dispatch(devicesActions.update(devices));
+          });
+        }
+        connectSocket();
+      });
+    } else {
+      fetch('/api/session').then(response => {
+        if (response.ok) {
+          dispatch(sessionActions.authenticated(true));
+        } else {
+          history.push('/login');
+        }
+      });
     }
-  }
+  }, [authenticated]);
 
-  componentDidMount() {
-    fetch('/api/devices').then(response => {
-      if (response.ok) {
-        response.json().then(devices => {
-          this.props.dispatch(devicesActions.update(devices));
-        });
-      }
-      this.connectSocket();
-    });
-  }
-
-  render() {
-    return null;
-  }
+  return null;
 }
 
 export default connect()(SocketController);

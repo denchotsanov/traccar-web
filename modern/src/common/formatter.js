@@ -8,7 +8,10 @@ const formatValue = (key, value) => {
     case 'longitude':
       return value.toFixed(5);
     case 'speed':
+    case 'course':
       return value.toFixed(1);
+    case 'batteryLevel':
+      return value + '%';
     default:
       return value;
   }

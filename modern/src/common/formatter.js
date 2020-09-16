@@ -5,6 +5,9 @@ const formatValue = (key, value) => {
     case 'fixTime':
       return moment(value).format('LLL');
     case 'timeAgo':
+      if(!moment(value).isValid()){
+        return value
+      }
       if(moment().subtract(1,'day').isBefore(moment(value))){
         return moment(value).fromNow();
       } else {

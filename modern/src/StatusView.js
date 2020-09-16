@@ -12,6 +12,7 @@ const StatusView = (props) => {
       <b>{t('deviceStatus')}:</b> {formatter(device.status, 'status')}<br />
       <b>{t('sharedLocation')}:</b> {formatter(position, 'latitude')} {formatter(position, 'longitude')}<br />
       <b>{t('positionSpeed')}:</b> {formatter(position.speed, 'speed')}<br />
+      <b>Last Update:</b> {formatter(position.fixTime, 'timeAgo')}<br />
       <b>{t('positionCourse')}:</b> {formatter(position.course, 'course')}<br />
       <b>{t('positionDistance')}:</b> {formatter(position.attributes.totalDistance, 'distance')}<br />
       {position.attributes.batteryLevel &&

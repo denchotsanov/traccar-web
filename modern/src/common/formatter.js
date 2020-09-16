@@ -4,10 +4,17 @@ const formatValue = (key, value) => {
   switch (key) {
     case 'fixTime':
       return moment(value).format('LLL');
+    case 'timeAgo':
+      if(moment().subtract(1,'day').isBefore(moment(value))){
+        return moment(value).fromNow();
+      } else {
+        return moment(value).format('LLL');
+      }
     case 'latitude':
     case 'longitude':
       return value.toFixed(5);
     case 'speed':
+      return (value * 1.852).toFixed(0) + ' km/h'
     case 'course':
       return value.toFixed(1);
     case 'batteryLevel':

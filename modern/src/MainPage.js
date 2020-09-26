@@ -6,7 +6,7 @@ import ContainerDimensions from 'react-container-dimensions';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import DeviceList from './DeviceList';
 import MainMap from './MainMap';
-import MainToobar from './MainToolbar';
+import MainToolbar from './MainToolbar';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -38,12 +38,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const MainPage = ({ width }) => {
-  const authenticated = useSelector(state => state.session.authenticated);
+  const initialized = useSelector(state => !!state.session.server && !!state.session.user);
   const classes = useStyles();
 
-  return !authenticated ? (<LinearProgress />) : (
+  return !initialized ? (<LinearProgress />) : (
     <div className={classes.root}>
-      <MainToobar />
+      <MainToolbar />
       <div className={classes.content}>
         <Drawer
           anchor={isWidthUp('sm', width) ? 'left' : 'bottom'}

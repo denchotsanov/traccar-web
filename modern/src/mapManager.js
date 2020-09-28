@@ -20,16 +20,33 @@ const loadImage = (url) => {
   });
 };
 
-const loadIcon = (key, background, url) => {
+const loadIcon = (key, background, url, options) => {
   return loadImage(url).then((image) => {
     const canvas = document.createElement('canvas');
     canvas.width = background.width * window.devicePixelRatio;
     canvas.height = background.height * window.devicePixelRatio;
     canvas.style.width = `${background.width}px`;
     canvas.style.height = `${background.height}px`;
-    const context = canvas.getContext('2d');
-    context.drawImage(background, 0, 0, canvas.width, canvas.height);
+    // context.drawImage(background, 0, 0, canvas.width, canvas.height);
 
+    const context = canvas.getContext('2d');
+    var X = canvas.width / 2;
+    var Y = canvas.height / 2;
+    var R = 20;
+    // if(options.background){
+    //   context.shadowColor = options.shadowColor;
+      context.shadowColor = '#ddd';
+      context.shadowOffsetX = X / 10;
+      context.shadowOffsetY = Y / 10;
+      context.shadowBlur = X / 10;
+
+      context.arc(X, Y, R, 0, 2 * Math.PI);
+      context.fillStyle = '#eee';
+      context.fill();
+   // }
+
+    context.shadowBlur = 0;
+    context.shadowColor = 'transparent';
     const imageWidth = image.width * window.devicePixelRatio;
     const imageHeight = image.height * window.devicePixelRatio;
     context.drawImage(image, (canvas.width - imageWidth) / 2, (canvas.height - imageHeight) / 2, imageWidth, imageHeight);
@@ -139,7 +156,7 @@ element.style.height = '100%';
   zoom: 1
 });*/
 
-/*const map = new mapboxgl.Map({
+const map = new mapboxgl.Map({
   container: element,
   style: {
     'version': 8,
@@ -169,35 +186,36 @@ element.style.height = '100%';
   },
   center: [0, 0],
   zoom: 1
-});*/
-
-const map = new mapboxgl.Map({
-  container: element,
-  style: {
-    version: 8,
-    sources: {
-      osm: {
-        type: 'raster',
-        tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-        tileSize: 256,
-        attribution: '© <a target="_top" rel="noopener" href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      },
-    },
-    glyphs: 'https://cdn.traccar.com/map/fonts/{fontstack}/{range}.pbf',
-    layers: [{
-      id: 'osm',
-      type: 'raster',
-      source: 'osm',
-    }],
-  },
 });
+
+// const map = new mapboxgl.Map({
+//   container: element,
+//   style: {
+//     version: 8,
+//     sources: {
+//       osm: {
+//         type: 'raster',
+//         tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+//         tileSize: 256,
+//         attribution: '© <a target="_top" rel="noopener" href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+//       },
+//     },
+//     glyphs: 'https://cdn.traccar.com/map/fonts/{fontstack}/{range}.pbf',
+//     layers: [{
+//       id: 'osm',
+//       type: 'raster',
+//       source: 'osm',
+//     }],
+//   },
+// });
 
 map.addControl(new mapboxgl.NavigationControl());
 
 map.on('load', () => {
+
   loadImage('images/background.svg').then(background => {
     Promise.all([
-      loadIcon('icon-marker', background, 'images/icon/marker.svg')
+      loadIcon('icon-marker', background, 'images/icon/marker.svg',)
     ]).then(() => {
       ready = true;
       if (registeredListener) {

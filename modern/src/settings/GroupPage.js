@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 
-import t from './common/localization';
-import userAttributes from './attributes/userAttributes';
-import EditItemView from './EditItemView';
+import t from '../common/localization';
+import EditItemView from '../EditItemView';
 import { Accordion, AccordionSummary, AccordionDetails, makeStyles, Typography } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import EditAttributesView from './attributes/EditAttributesView';
+import EditAttributesView from '../attributes/EditAttributesView';
+import deviceAttributes from '../attributes/deviceAttributes';
+import SelectField from '../form/SelectField';
 
 const useStyles = makeStyles(() => ({
   details: {
@@ -14,13 +15,13 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const UserPage = () => {
+const GroupPage = () => {
   const classes = useStyles();
 
   const [item, setItem] = useState();
 
   return (
-    <EditItemView endpoint="users" item={item} setItem={setItem}>
+    <EditItemView endpoint="groups" item={item} setItem={setItem}>
       {item &&
         <>
           <Accordion defaultExpanded>
@@ -36,17 +37,21 @@ const UserPage = () => {
                 onChange={event => setItem({...item, name: event.target.value})}
                 label={t('sharedName')}
                 variant="filled" />
-              <TextField
+            </AccordionDetails>
+          </Accordion>
+          <Accordion>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="subtitle1">
+                {t('sharedExtra')}
+              </Typography>
+            </AccordionSummary>
+            <AccordionDetails className={classes.details}>
+              <SelectField
                 margin="normal"
-                defaultValue={item.email}
-                onChange={event => setItem({...item, email: event.target.value})}
-                label={t('userEmail')}
-                variant="filled" />
-              <TextField
-                margin="normal"
-                type="password"
-                onChange={event => setItem({...item, password: event.target.value})}
-                label={t('userPassword')}
+                defaultValue={item.groupId}
+                onChange={event => setItem({...item, groupId: Number(event.target.value)})}
+                endpoint="/api/groups"
+                label={t('groupParent')}
                 variant="filled" />
             </AccordionDetails>
           </Accordion>
@@ -60,7 +65,7 @@ const UserPage = () => {
               <EditAttributesView
                 attributes={item.attributes}
                 setAttributes={attributes => setItem({...item, attributes})}
-                definitions={userAttributes}
+                definitions={deviceAttributes}
                 />
             </AccordionDetails>
           </Accordion>
@@ -70,4 +75,4 @@ const UserPage = () => {
   );
 }
 
-export default UserPage;
+export default GroupPage;

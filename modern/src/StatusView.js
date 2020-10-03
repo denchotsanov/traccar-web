@@ -14,12 +14,12 @@ const StatusView = ({ deviceId, onShowDetails }) => {
 
   return (
     <>
-      <b>{t('deviceStatus')}:</b> {formatter(device.status, 'status')}<br />
-      <b>{t('sharedLocation')}:</b> {formatter(position, 'latitude')} {formatter(position, 'longitude')}<br />
-      <b>{t('positionSpeed')}:</b> {formatter(position.speed, 'speed')}<br />
-      <b>Last Update:</b> {formatter(position.fixTime, 'timeAgo')}<br />
-      <b>{t('positionCourse')}:</b> {formatter(position.course, 'course')}<br />
-      <b>{t('positionDistance')}:</b> {formatter(position.attributes.totalDistance, 'distance')}<br />
+      <b>{t('deviceStatus')}:</b> {formatPosition(device.status, 'status')}<br />
+      <b>{t('sharedLocation')}:</b> {formatPosition(position, 'latitude')} {formatPosition(position, 'longitude')}<br />
+      <b>{t('positionSpeed')}:</b> {formatPosition(position.speed, 'speed')}<br />
+      <b>Last Update:</b> {formatPosition(position.fixTime, 'timeAgo')}<br />
+      <b>{t('positionCourse')}:</b> {formatPosition(position.course, 'course')}<br />
+      <b>{t('positionDistance')}:</b> {formatPosition(position.attributes.totalDistance, 'distance')}<br />
       {position.attributes.batteryLevel &&
         <><b>{t('positionBattery')}:</b> {formatPosition(position.attributes.batteryLevel, 'batteryLevel')}<br /></>
       }

@@ -17,7 +17,7 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 
-import formatter from './common/formatter';
+import {formatPosition} from './common/formatter';
 
 import { devicesActions } from './store';
 import t from './common/localization';
@@ -129,7 +129,7 @@ const DeviceList = () => {
                   <LocationOnIcon className={classes.avatarIcon} />
                 </Avatar>
               </ListItemAvatar>
-              <ListItemText className={classes.deviceName} primary={device.name} secondary={formatter(device.lastUpdate,'timeAgo')} />
+              <ListItemText className={classes.deviceName} primary={device.name} secondary={formatPosition(device.lastUpdate,'timeAgo')} />
               <ListItemSecondaryAction>
                 <IconButton onClick={(event) => handleMenuClick(event, device.id)}>
                   <MoreVertIcon />

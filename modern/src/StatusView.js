@@ -1,11 +1,16 @@
 import t from './common/localization'
 import React from 'react';
 import { useSelector } from 'react-redux';
-import formatter from './common/formatter';
+import { formatPosition } from './common/formatter';
 
-const StatusView = (props) => {
-  const device = useSelector(state => state.devices.items[props.deviceId]);
-  const position = useSelector(state => state.positions.items[props.deviceId]);
+const StatusView = ({ deviceId, onShowDetails }) => {
+  const device = useSelector(state => state.devices.items[deviceId]);
+  const position = useSelector(state => state.positions.items[deviceId]);
+
+  const handleClick = e => {
+    e.preventDefault();
+    onShowDetails(position.id);
+  };
 
   return (
     <>
@@ -16,8 +21,9 @@ const StatusView = (props) => {
       <b>{t('positionCourse')}:</b> {formatter(position.course, 'course')}<br />
       <b>{t('positionDistance')}:</b> {formatter(position.attributes.totalDistance, 'distance')}<br />
       {position.attributes.batteryLevel &&
-        <><b>{t('positionBattery')}:</b> {formatter(position.attributes.batteryLevel, 'batteryLevel')}<br /></>
+        <><b>{t('positionBattery')}:</b> {formatPosition(position.attributes.batteryLevel, 'batteryLevel')}<br /></>
       }
+      <a href="#" onClick={handleClick}>{t('sharedShowDetails')}</a>
     </>
   );
 };

@@ -5,7 +5,6 @@ import MoreVertIcon from '@material-ui/icons/MoreVert';
 import t from '../common/localization';
 import { useEffectAsync } from '../reactHelper';
 import EditCollectionView from '../EditCollectionView';
-import { formatBoolean } from '../common/formatter';
 
 const useStyles = makeStyles(theme => ({
   columnAction: {
@@ -14,13 +13,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const UsersView = ({ updateTimestamp, onMenuClick }) => {
+const GroupsView = ({ updateTimestamp, onMenuClick }) => {
   const classes = useStyles();
 
   const [items, setItems] = useState([]);
 
   useEffectAsync(async () => {
-    const response = await fetch('/api/users');
+    const response = await fetch('/api/groups');
     if (response.ok) {
       setItems(await response.json());
     }
@@ -33,9 +32,6 @@ const UsersView = ({ updateTimestamp, onMenuClick }) => {
         <TableRow>
           <TableCell className={classes.columnAction} />
           <TableCell>{t('sharedName')}</TableCell>
-          <TableCell>{t('userEmail')}</TableCell>
-          <TableCell>{t('userAdmin')}</TableCell>
-          <TableCell>{t('sharedDisabled')}</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -47,9 +43,6 @@ const UsersView = ({ updateTimestamp, onMenuClick }) => {
               </IconButton>
             </TableCell>
             <TableCell>{item.name}</TableCell>
-            <TableCell>{item.email}</TableCell>
-            <TableCell>{formatBoolean(item, 'administrator')}</TableCell>
-            <TableCell>{formatBoolean(item, 'disabled')}</TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -58,13 +51,13 @@ const UsersView = ({ updateTimestamp, onMenuClick }) => {
   );
 }
 
-const UsersPage = () => {
+const GroupsPage = () => {
   return (
     <>
       <MainToolbar />
-      <EditCollectionView content={UsersView} editPath="/user" endpoint="users" />
+      <EditCollectionView content={GroupsView} editPath="/settings/group" endpoint="groups" />
     </>
   );
 }
 
-export default UsersPage;
+export default GroupsPage;

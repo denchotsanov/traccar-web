@@ -22,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const EditItemView = ({ children, endpoint, setItem, getItem }) => {
+const EditItemView = ({ children, endpoint, item, setItem }) => {
   const history = useHistory();
   const classes = useStyles();
   const { id } = useParams();
@@ -47,7 +47,7 @@ const EditItemView = ({ children, endpoint, setItem, getItem }) => {
     const response = await fetch(url, {
       method: !id ? 'POST' : 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(getItem()),
+      body: JSON.stringify(item),
     });
 
     if (response.ok) {
@@ -59,19 +59,17 @@ const EditItemView = ({ children, endpoint, setItem, getItem }) => {
     <>
       <MainToolbar />
       <Container maxWidth='xs' className={classes.container}>
-        <form>
-          {children}
-          <FormControl fullWidth margin='normal'>
-            <div className={classes.buttons}>
-              <Button type='button' color='primary' variant='outlined' onClick={() => history.goBack()}>
-                {t('sharedCancel')}
-              </Button>
-              <Button type='button' color='primary' variant='contained' onClick={handleSave}>
-                {t('sharedSave')}
-              </Button>
-            </div>
-          </FormControl>
-        </form>
+        {children}
+        <FormControl fullWidth margin='normal'>
+          <div className={classes.buttons}>
+            <Button type='button' color='primary' variant='outlined' onClick={() => history.goBack()}>
+              {t('sharedCancel')}
+            </Button>
+            <Button type='button' color='primary' variant='contained' onClick={handleSave}>
+              {t('sharedSave')}
+            </Button>
+          </div>
+        </FormControl>
       </Container>
     </>
   );

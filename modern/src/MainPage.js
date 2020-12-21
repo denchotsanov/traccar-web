@@ -1,12 +1,15 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { isWidthUp, makeStyles, withWidth } from '@material-ui/core';
 import Drawer from '@material-ui/core/Drawer';
 import ContainerDimensions from 'react-container-dimensions';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import DevicesList from './DevicesList';
-import MainMap from './MainMap';
 import MainToolbar from './MainToolbar';
+import Map from './map/Map';
+import SelectedDeviceMap from './map/SelectedDeviceMap';
+import AccuracyMap from './map/AccuracyMap';
+import GeofenceMap from './map/GeofenceMap';
+import CurrentPositionsMap from './map/CurrentPositionsMap';
+import CurrentLocationMap from './map/CurrentLocationMap';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -38,10 +41,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const MainPage = ({ width }) => {
-  const initialized = useSelector(state => !!state.session.server && !!state.session.user);
   const classes = useStyles();
 
-  return !initialized ? (<LinearProgress />) : (
+  return (
     <div className={classes.root}>
       <MainToolbar />
       <div className={classes.content}>
@@ -53,7 +55,13 @@ const MainPage = ({ width }) => {
         </Drawer>
         <div className={classes.mapContainer}>
           <ContainerDimensions>
-            <MainMap />
+            <Map>
+              <CurrentLocationMap />
+              <GeofenceMap />
+              <AccuracyMap />
+              <CurrentPositionsMap />
+              <SelectedDeviceMap />
+            </Map>
           </ContainerDimensions>
         </div>
       </div>

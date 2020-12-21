@@ -1,7 +1,7 @@
-import t from './common/localization'
+import t from '../common/localization'
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { formatPosition } from './common/formatter';
+import { formatPosition } from '../common/formatter';
 
 const StatusView = ({ deviceId, onShowDetails }) => {
   const device = useSelector(state => state.devices.items[deviceId]);
@@ -22,7 +22,7 @@ const StatusView = ({ deviceId, onShowDetails }) => {
       {position.attributes.batteryLevel &&
         <><b>{t('positionBattery')}:</b> {formatPosition(position.attributes.batteryLevel, 'batteryLevel')}<br /></>
       }
-      <a href="#" onClick={handleClick}>{t('sharedShowDetails')}</a>
+      <a href="/" onClick={handleClick}>{t('sharedShowDetails')}</a>
     </>
   );
 };

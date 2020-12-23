@@ -29,6 +29,7 @@ import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import TrendingUpIcon from '@material-ui/icons/TrendingUp';
 import FolderIcon from '@material-ui/icons/Folder';
+import ReplayIcon from '@material-ui/icons/Replay';
 import t from './common/localization';
 
 const useStyles = makeStyles(theme => ({
@@ -109,6 +110,12 @@ const MainToolbar = () => {
               </ListItemIcon>
               <ListItemText primary={t('mapTitle')} />
             </ListItem>
+            <ListItem button onClick={() => history.push('/replay')}>
+              <ListItemIcon>
+                <ReplayIcon />
+              </ListItemIcon>
+              <ListItemText primary={t('reportReplay')} />
+            </ListItem>
           </List>
           <Divider />
           <List
@@ -123,31 +130,31 @@ const MainToolbar = () => {
               </ListItemIcon>
               <ListItemText primary={t('reportRoute')} />
             </ListItem>
-            <ListItem button disabled>
+            <ListItem button onClick={() => history.push('/reports/event')}>
               <ListItemIcon>
                 <NotificationsActiveIcon />
               </ListItemIcon>
               <ListItemText primary={t('reportEvents')} />
             </ListItem>
-            <ListItem button disabled>
+            <ListItem button onClick={() => history.push('/reports/trip')}>
               <ListItemIcon>
                 <PlayCircleFilledIcon />
               </ListItemIcon>
               <ListItemText primary={t('reportTrips')} />
             </ListItem>
-            <ListItem button disabled>
+            <ListItem button onClick={() => history.push('/reports/stop')}>
               <ListItemIcon>
                 <PauseCircleFilledIcon />
               </ListItemIcon>
               <ListItemText primary={t('reportStops')} />
             </ListItem>
-            <ListItem button disabled>
+            <ListItem button onClick={() => history.push('/reports/summary')}>
               <ListItemIcon>
                 <FormatListBulletedIcon />
               </ListItemIcon>
               <ListItemText primary={t('reportSummary')} />
             </ListItem>
-            <ListItem button disabled>
+            <ListItem button onClick={() => history.push('/reports/chart')}>
               <ListItemIcon>
                 <TrendingUpIcon />
               </ListItemIcon>
@@ -179,6 +186,12 @@ const MainToolbar = () => {
               </ListItemIcon>
               <ListItemText primary={t('settingsGroups')} />
             </ListItem>
+            <ListItem button onClick={() => history.push('/settings/drivers')}>
+              <ListItemIcon>
+                <PersonIcon />
+              </ListItemIcon>
+              <ListItemText primary={t('sharedDrivers')} />
+            </ListItem>            
           </List>
           {adminEnabled && (
             <>

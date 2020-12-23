@@ -9,7 +9,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
-import LocationOnIcon from '@material-ui/icons/LocationOn';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 import { devicesActions } from './store';
@@ -20,6 +19,11 @@ const useStyles = makeStyles(() => ({
   list: {
     maxHeight: '100%',
     overflow: 'auto',
+  },
+  icon: {
+    width: '25px',
+    height: '25px',
+    filter: 'brightness(0) invert(1)',
   },
 }));
 
@@ -43,7 +47,7 @@ const DeviceView = ({ updateTimestamp, onMenuClick }) => {
           <ListItem button key={item.id} onClick={() => dispatch(devicesActions.select(item))}>
             <ListItemAvatar>
               <Avatar>
-                <LocationOnIcon />
+                <img className={classes.icon} src={`images/icon/${item.category || 'default'}.svg`} alt="" />
               </Avatar>
             </ListItemAvatar>
             <ListItemText primary={item.name} secondary={item.uniqueId} />

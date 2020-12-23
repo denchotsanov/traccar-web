@@ -2,7 +2,7 @@ import React from 'react';
 import { isWidthUp, makeStyles, withWidth } from '@material-ui/core';
 import Drawer from '@material-ui/core/Drawer';
 import ContainerDimensions from 'react-container-dimensions';
-import DevicesList from './DevicesList';
+import DeviceList from './DeviceList';
 import MainToolbar from './MainToolbar';
 import Map from './map/Map';
 import SelectedDeviceMap from './map/SelectedDeviceMap';
@@ -51,7 +51,7 @@ const MainPage = ({ width }) => {
           anchor={isWidthUp('sm', width) ? 'left' : 'bottom'}
           variant='permanent'
           classes={{ paper: classes.drawerPaper }}>
-          <DevicesList />
+          <DeviceList />
         </Drawer>
         <div className={classes.mapContainer}>
           <ContainerDimensions>
